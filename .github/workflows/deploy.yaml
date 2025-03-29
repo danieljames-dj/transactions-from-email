@@ -1,0 +1,36 @@
+name: Deploy to Google Apps Script
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: '30 3 * * *'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Clasp
+        run: npm install -g @google/clasp
+
+      - name: Create .clasprc.json for Authentication
+        run: echo '${{ secrets.CLASPRC_JSON }}' > ~/.clasprc.json
+
+      - name: Push to Google Apps Script
+        run: clasp push
+
+      - name: Deploy
+        run: clasp deploy
+
+      - name: Cleanup Credentials
+        if: always()
+        run: rm -f ~/.clasprc.json
