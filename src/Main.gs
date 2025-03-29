@@ -14,7 +14,7 @@ async function processRecentEmails() {
       const messageDate = message.getDate();
 
       if (messageDate >= threeHoursAgo && !oldProcessedIds.has(messageId)) {
-        // Process email.
+        await processEmail(message);
       }
       newProcessIds.add(messageId);
     }
