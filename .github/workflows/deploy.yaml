@@ -28,17 +28,17 @@ jobs:
       - name: Push to Google Apps Script
         run: clasp push --force
 
+      - name: Deploy
+        run: clasp deploy --deploymentId ${{ secrets.DEPLOYMENT_ID }} --description "Automated Deploy"
+
       - name: Set Script Properties
         run: |
-          PROPERTIES_JSON=$(echo '{
+          PROPERTIES_JSON='{
             "SHEET_URL": "${{ secrets.SHEET_URL }}",
             "SHEET_NAME": "${{ secrets.SHEET_NAME }}",
             "GEMINI_API_KEY": "${{ secrets.GEMINI_API_KEY }}"
-          }')
+          }'
           clasp run 'setScriptPropertiesFromObject' --params "$PROPERTIES_JSON"
-
-      - name: Deploy
-        run: clasp deploy
 
       - name: Cleanup Credentials
         if: always()
