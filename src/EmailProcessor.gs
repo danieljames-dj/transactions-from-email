@@ -8,11 +8,40 @@ async function processEmail(email) {
 }
 
 async function isFinancialTransaction(emailBody) {
-  // Check if the email is a financial transaction.
+  try {
+    const promptToCheckIfFinancialTransaction = `
+      Is this a notificaion email that says a financial transaction was made?
+      Answer with only "true" or "false".\n\n${emailBody}
+    `;
+
+    const response = await generateContent(promptToCheckIfFinancialTransaction);
+    return response.toLowerCase().trim() === 'true';
+  } catch(error) {
+    Logger.log(`Error checking if financial transaction: ${error}`);
+  }
 }
 
 async function getTransactionDetails(emailBody) {
-  // Return the transaction details.
+  const currentDate = (new Date()).toISOString().split('T')[0];
+
+  const promptToCheckAmountFromEmailBody = `
+    What is the amount in the following financial transaction message?
+    Answer with only the amount without any currency.
+    In case you cannot find, say just 0.\n\n${emailBody}
+  `;
+  const promptToCheckTransactionDateFromEmailBody = `
+    What is the transaction date in the following financial transaction message?
+    Answer with only the date in YYYY-MM-DD format.
+    In case you cannto find, say just "${currentDate}".\n\n${emailBody}
+  `
+
+  const amount = await generateContent(promptToCheckAmountFromEmailBody);
+  const transactionDate = await generateContent(promptToCheckTransactionDateFromEmailBody);
+
+  return {
+    amount: amount,
+    transactionDate: transactionDate,
+  }
 }
 
 async function writeToSpreadsheet(transactionDetails) {

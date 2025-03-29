@@ -32,7 +32,8 @@ jobs:
         run: |
           PROPERTIES_JSON=$(echo '{
             "SHEET_URL": "${{ secrets.SHEET_URL }}",
-            "SHEET_NAME": "${{ secrets.SHEET_NAME }}"
+            "SHEET_NAME": "${{ secrets.SHEET_NAME }}",
+            "GEMINI_API_KEY": "${{ secrets.GEMINI_API_KEY }}"
           }')
           clasp run 'setScriptPropertiesFromObject' --params "$PROPERTIES_JSON"
 
