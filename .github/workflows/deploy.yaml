@@ -22,6 +22,33 @@ jobs:
       - name: Install Clasp
         run: npm install -g @google/clasp
 
+      - name: Inject Configuration into Config.gs
+        run: |
+          echo "Starting configuration injection..."
+
+          # --- Prepare Escaped Values ---
+          # Escape backslashes and single quotes to prevent breaking JS strings
+          # Add more escaping if your secrets contain other special JS characters
+          SHEET_URL_ESCAPED=$(echo "${{ secrets.SHEET_URL }}" | sed -e 's/\\/\\\\/g' -e "s/'/\\\'/g")
+          SHEET_NAME_ESCAPED=$(echo "${{ secrets.SHEET_NAME }}" | sed -e 's/\\/\\\\/g' -e "s/'/\\\'/g")
+          GEMINI_API_KEY_ESCAPED=$(echo "${{ secrets.GEMINI_API_KEY }}" | sed -e 's/\\/\\\\/g' -e "s/'/\\\'/g")
+          echo "Values escaped."
+
+          # --- Perform Replacements ---
+          # Use sed to replace each placeholder. The '-i' flag modifies the file in-place.
+          # Using '|' as delimiter for sed to avoid issues with '/' in URLs.
+          # Ensure Config.gs exists at this path relative to checkout root.
+          sed -i "s|'###PLACEHOLDER_SHEET_URL###'|'${SHEET_URL_ESCAPED}'|" src/Config.gs
+          echo "Injected SHEET_URL."
+
+          sed -i "s|'###PLACEHOLDER_SHEET_NAME###'|'${SHEET_NAME_ESCAPED}'|" src/Config.gs
+          echo "Injected SHEET_NAME."
+
+          sed -i "s|'###PLACEHOLDER_GEMINI_API_KEY###'|'${GEMINI_API_KEY_ESCAPED}'|" src/Config.gs
+          echo "Injected GEMINI_API_KEY."
+
+          echo "Configuration injection complete."
+
       - name: Create .clasprc.json for Authentication
         run: echo '${{ secrets.CLASPRC_JSON }}' > ~/.clasprc.json
 
@@ -31,6 +58,7 @@ jobs:
       - name: Deploy
         run: clasp deploy --deploymentId ${{ secrets.DEPLOYMENT_ID }} --description "Automated Deploy"
 
+      # This won't work because of some strange permission issue, for now using the workaround.
       - name: Set Script Properties
         run: |
           PROPERTIES_JSON='{

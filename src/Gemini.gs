@@ -1,5 +1,4 @@
 // Gemini API client using our simplified axios-like library
-const GEMINI_API_KEY = PropertiesService.getScriptProperties().getProperty('GEMINI_API_KEY');
 const GEMINI_MODEL_NAME = 'gemini-2.0-flash';
 const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models';
 

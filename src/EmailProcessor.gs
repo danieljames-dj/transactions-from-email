@@ -45,10 +45,7 @@ async function getTransactionDetails(emailBody) {
 }
 
 async function writeToSpreadsheet(transactionDetails) {
-  const sheetUrl = PropertiesService.getScriptProperties().getProperty('SHEET_URL');
-  const sheetName = PropertiesService.getScriptProperties().getProperty('SHEET_NAME');
-
-  appendRowToSheetByUrl(sheetUrl, sheetName, [
+  appendRowToSheetByUrl(SHEET_URL, SHEET_NAME, [
     transactionDetails.transactionDate,
     transactionDetails.amount,
   ]);
