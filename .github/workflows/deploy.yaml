@@ -26,7 +26,7 @@ jobs:
         run: echo '${{ secrets.CLASPRC_JSON }}' > ~/.clasprc.json
 
       - name: Push to Google Apps Script
-        run: clasp push
+        run: clasp push --force
 
       - name: Set Script Properties
         run: |
