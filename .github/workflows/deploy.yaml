@@ -28,6 +28,14 @@ jobs:
       - name: Push to Google Apps Script
         run: clasp push
 
+      - name: Set Script Properties
+        run: |
+          PROPERTIES_JSON=$(echo '{
+            "SHEET_URL": "${{ secrets.SHEET_URL }}",
+            "SHEET_NAME": "${{ secrets.SHEET_NAME }}"
+          }')
+          clasp run 'setScriptPropertiesFromObject' --params "$PROPERTIES_JSON"
+
       - name: Deploy
         run: clasp deploy
 

@@ -16,5 +16,11 @@ async function getTransactionDetails(emailBody) {
 }
 
 async function writeToSpreadsheet(transactionDetails) {
-  // Write to spreadsheet.
+  const sheetUrl = PropertiesService.getScriptProperties().getProperty('SHEET_URL');
+  const sheetName = PropertiesService.getScriptProperties().getProperty('SHEET_NAME');
+
+  appendRowToSheetByUrl(sheetUrl, sheetName, [
+    transactionDetails.transactionDate,
+    transactionDetails.amount,
+  ]);
 }
