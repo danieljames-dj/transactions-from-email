@@ -44,7 +44,7 @@ async function getTransactionDetails(emailBody) {
   return {
     amount: amount,
     transactionDate: transactionDate,
-    transactionNote: transactionNote,
+    transactionNote: transactionNote.trim(),
   }
 }
 
