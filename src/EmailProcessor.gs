@@ -1,18 +1,20 @@
 const IS_FINANCIAL_TRANSACTION_PROMPT = `
   Is this a notificaion email that says a financial transaction was made?
+  If this is an email to just notify an OTP, no need to consider this as a financial transaction.
   Answer with only "true" or "false".
 `;
 
 const GET_TRANSACTION_AMOUNT_PROMPT = `
   What is the amount in the following financial transaction message?
   Answer with only the amount without any currency.
-  In case you cannot find, say just 0.
+  Also, if there are any decimals, remove them. Only the integer part is enough.
+  In case you cannot find, say just -1 (this is to distinguish so that user knows something is wrong).
 `;
 
 const GET_TRANSACTION_DATE_PROMPT = `
   What is the transaction date in the following financial transaction message?
   Answer with only the date in YYYY-MM-DD format.
-  In case you cannto find, say just "1970-01-01" (this is to distinguish so that user knows something is wrong).
+  In case you cannot find, say just "1970-01-01" (this is to distinguish so that user knows something is wrong).
 `;
 
 async function processEmail(email) {
