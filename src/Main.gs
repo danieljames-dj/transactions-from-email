@@ -4,17 +4,31 @@ async function processRecentEmails() {
   const searchQuery = 'after:' + formatDate(threeHoursAgo);
   const oldProcessedIds = getProcessedIds();
   const newProcessIds = new Set();
+  let resourceExhausted = false;
 
   const threads = GmailApp.search(searchQuery);
 
   for (const thread of threads) {
+    if (resourceExhausted) {
+      break;
+    }
+
     const messages = thread.getMessages();
     for (const message of messages) {
       const messageId = message.getId();
       const messageDate = message.getDate();
 
       if (messageDate >= threeHoursAgo && !oldProcessedIds.has(messageId)) {
-        await processEmail(message);
+        try {
+          await processEmail(message);
+        } catch(error) {
+          Logger.log(error);
+          if (error?.response?.data?.error?.code === 429 && error?.response?.data?.error?.status === "RESOURCE_EXHAUSTED") {
+            resourceExhausted = true;
+            break;
+          }
+          throw error;
+        }
       }
       newProcessIds.add(messageId);
     }

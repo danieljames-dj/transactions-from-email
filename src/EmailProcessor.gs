@@ -8,17 +8,13 @@ async function processEmail(email) {
 }
 
 async function isFinancialTransaction(emailBody) {
-  try {
-    const promptToCheckIfFinancialTransaction = `
-      Is this a notificaion email that says a financial transaction was made?
-      Answer with only "true" or "false".\n\n${emailBody}
-    `;
+  const promptToCheckIfFinancialTransaction = `
+    Is this a notificaion email that says a financial transaction was made?
+    Answer with only "true" or "false".\n\n${emailBody}
+  `;
 
-    const response = await generateContent(promptToCheckIfFinancialTransaction);
-    return response.toLowerCase().trim() === 'true';
-  } catch(error) {
-    Logger.log(`Error checking if financial transaction: ${error}`);
-  }
+  const response = await generateContent(promptToCheckIfFinancialTransaction);
+  return response.toLowerCase().trim() === 'true';
 }
 
 async function getTransactionDetails(emailBody) {
