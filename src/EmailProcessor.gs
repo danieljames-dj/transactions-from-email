@@ -1,3 +1,20 @@
+const IS_FINANCIAL_TRANSACTION_PROMPT = `
+  Is this a notificaion email that says a financial transaction was made?
+  Answer with only "true" or "false".
+`;
+
+const GET_TRANSACTION_AMOUNT_PROMPT = `
+  What is the amount in the following financial transaction message?
+  Answer with only the amount without any currency.
+  In case you cannot find, say just 0.
+`;
+
+const GET_TRANSACTION_DATE_PROMPT = `
+  What is the transaction date in the following financial transaction message?
+  Answer with only the date in YYYY-MM-DD format.
+  In case you cannto find, say just "1970-01-01" (this is to distinguish so that user knows something is wrong).
+`;
+
 async function processEmail(email) {
   const emailBody = email.getPlainBody();
 
@@ -8,29 +25,13 @@ async function processEmail(email) {
 }
 
 async function isFinancialTransaction(emailBody) {
-  const promptToCheckIfFinancialTransaction = `
-    Is this a notificaion email that says a financial transaction was made?
-    Answer with only "true" or "false".\n\n${emailBody}
-  `;
-
-  const response = await generateContent(promptToCheckIfFinancialTransaction);
+  const response = await generateContent(`${IS_FINANCIAL_TRANSACTION_PROMPT}\n\n${emailBody}`);
   return response.toLowerCase().trim() === 'true';
 }
 
 async function getTransactionDetails(emailBody) {
-  const promptToCheckAmountFromEmailBody = `
-    What is the amount in the following financial transaction message?
-    Answer with only the amount without any currency.
-    In case you cannot find, say just 0.\n\n${emailBody}
-  `;
-  const promptToCheckTransactionDateFromEmailBody = `
-    What is the transaction date in the following financial transaction message?
-    Answer with only the date in YYYY-MM-DD format.
-    In case you cannto find, say just "1970-01-01" (this is to distinguish so that user knows something is wrong).\n\n${emailBody}
-  `
-
-  const amount = await generateContent(promptToCheckAmountFromEmailBody);
-  const transactionDate = await generateContent(promptToCheckTransactionDateFromEmailBody);
+  const amount = await generateContent(`${GET_TRANSACTION_AMOUNT_PROMPT}\n\n${emailBody}`);
+  const transactionDate = await generateContent(`${GET_TRANSACTION_DATE_PROMPT}\n\n${emailBody}`);
 
   return {
     amount: amount,
