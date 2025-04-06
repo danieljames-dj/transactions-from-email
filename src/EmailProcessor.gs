@@ -18,8 +18,6 @@ async function isFinancialTransaction(emailBody) {
 }
 
 async function getTransactionDetails(emailBody) {
-  const currentDate = (new Date()).toISOString().split('T')[0];
-
   const promptToCheckAmountFromEmailBody = `
     What is the amount in the following financial transaction message?
     Answer with only the amount without any currency.
@@ -28,7 +26,7 @@ async function getTransactionDetails(emailBody) {
   const promptToCheckTransactionDateFromEmailBody = `
     What is the transaction date in the following financial transaction message?
     Answer with only the date in YYYY-MM-DD format.
-    In case you cannto find, say just "${currentDate}".\n\n${emailBody}
+    In case you cannto find, say just "1970-01-01" (this is to distinguish so that user knows something is wrong).\n\n${emailBody}
   `
 
   const amount = await generateContent(promptToCheckAmountFromEmailBody);
