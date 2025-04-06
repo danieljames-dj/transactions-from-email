@@ -17,6 +17,11 @@ const GET_TRANSACTION_DATE_PROMPT = `
   In case you cannot find, say just "1970-01-01" (this is to distinguish so that user knows something is wrong).
 `;
 
+const GET_TRANSACTION_NOTES_PROMPT = `
+  Give a very short description on what the transaction is, so that user can understand the reason.
+  No need to make a full sentence, this is an excel column. So just a few words to understand is enough.
+`;
+
 async function processEmail(email) {
   const emailBody = email.getPlainBody();
 
@@ -34,10 +39,12 @@ async function isFinancialTransaction(emailBody) {
 async function getTransactionDetails(emailBody) {
   const amount = await generateContent(`${GET_TRANSACTION_AMOUNT_PROMPT}\n\n${emailBody}`);
   const transactionDate = await generateContent(`${GET_TRANSACTION_DATE_PROMPT}\n\n${emailBody}`);
+  const transactionNote = await generateContent(`${GET_TRANSACTION_NOTES_PROMPT}\n\n${emailBody}`);
 
   return {
     amount: amount,
     transactionDate: transactionDate,
+    transactionNote: transactionNote,
   }
 }
 
@@ -45,5 +52,6 @@ async function writeToSpreadsheet(transactionDetails) {
   appendRowToSheetByUrl(SHEET_URL, SHEET_NAME, [
     transactionDetails.transactionDate,
     transactionDetails.amount,
+    transactionDetails.transactionNote,
   ]);
 }
