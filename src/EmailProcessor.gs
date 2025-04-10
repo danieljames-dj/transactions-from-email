@@ -1,6 +1,10 @@
 const IS_FINANCIAL_TRANSACTION_PROMPT = `
   Is this a notificaion email that says a financial transaction was made?
   If this is an email to just notify an OTP, no need to consider this as a financial transaction.
+  For reference, following are some sender email IDs and their usual pattern which needs to be kept in mind:
+
+  1. order-update@amazon.in: They usually send order updates from amazon. This email might have the amount of the product, but that is just a FYI. So those need not be considered as financial transaction in most of the cases.
+
   Answer with only "true" or "false".
 `;
 
@@ -24,15 +28,16 @@ const GET_TRANSACTION_NOTES_PROMPT = `
 
 async function processEmail(email) {
   const emailBody = email.getPlainBody();
+  const sender = email.getFrom();
 
-  if (await isFinancialTransaction(emailBody)) {
+  if (await isFinancialTransaction(emailBody, sender)) {
     const transactionDetails = await getTransactionDetails(emailBody);
     writeToSpreadsheet(transactionDetails);
   }
 }
 
-async function isFinancialTransaction(emailBody) {
-  const response = await generateContent(`${IS_FINANCIAL_TRANSACTION_PROMPT}\n\n${emailBody}`);
+async function isFinancialTransaction(emailBody, sender) {
+  const response = await generateContent(`${IS_FINANCIAL_TRANSACTION_PROMPT}\n\nSender: ${sender}\n\nEmail Body: ${emailBody}`);
   return response.toLowerCase().trim() === 'true';
 }
 
