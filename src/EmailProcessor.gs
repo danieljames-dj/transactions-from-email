@@ -15,15 +15,13 @@ const GET_TRANSACTION_AMOUNT_PROMPT = `
   In case you cannot find, say just -1 (this is to distinguish so that user knows something is wrong).
 `;
 
-const GET_TRANSACTION_DATE_PROMPT = `
-  What is the transaction date in the following financial transaction message?
-  Answer with only the date in YYYY-MM-DD format.
-  In case you cannot find, say just "1970-01-01" (this is to distinguish so that user knows something is wrong).
-`;
-
-const GET_TRANSACTION_NOTES_PROMPT = `
-  Give a very short description on what the transaction is, so that user can understand the reason.
-  No need to make a full sentence, this is an excel column. So just a few words to understand is enough.
+const EXPERIMENTAL_PROMPT_FOR_FINANCE_DETAILS = `
+  Instructions:
+  For this question, you should return a JSON in stringified format.
+  After this Instructions section, you will have the "Email Body" section and that section should be used to generate the JSON.
+  The keys and corresponding description of the values (which you should generate) are as follows:
+  1. transactionDate: This must be in format YYYY-MM-DD. If a value cannot be generated, just put it as "1970-01-01". If the email body is a financial transaction, the value should be the date on which that transaction happened.
+  2. transactionNote: This should be a very short description on what the transaction is, so that user can understand the reason for transaction. No need to make a full sentence, this is an excel column. So just a few words to understand is enough.
 `;
 
 async function processEmail(email) {
@@ -43,13 +41,13 @@ async function isFinancialTransaction(emailBody, sender) {
 
 async function getTransactionDetails(emailBody) {
   const amount = await generateContent(`${GET_TRANSACTION_AMOUNT_PROMPT}\n\n${emailBody}`);
-  const transactionDate = await generateContent(`${GET_TRANSACTION_DATE_PROMPT}\n\n${emailBody}`);
-  const transactionNote = await generateContent(`${GET_TRANSACTION_NOTES_PROMPT}\n\n${emailBody}`);
+  const transactionDetailsString = await generateContent(`${EXPERIMENTAL_PROMPT_FOR_FINANCE_DETAILS}\n\nEmail Body:\n${emailBody}`);
+  const transactionDetails = detailsToJson(transactionDetailsString);
 
   return {
     amount: amount,
-    transactionDate: transactionDate,
-    transactionNote: transactionNote.trim(),
+    transactionDate: transactionDetails?.transactionDate,
+    transactionNote: transactionDetails?.transactionNote?.trim(),
   }
 }
 
@@ -59,4 +57,12 @@ async function writeToSpreadsheet(transactionDetails) {
     transactionDetails.amount,
     transactionDetails.transactionNote,
   ]);
+}
+
+function detailsToJson(transactionDetails) {
+  const regex = /^```json([\s\S]*)```$/;
+  const match = transactionDetails.match(regex);
+  const jsonString = match ? match[1] : transactionDetails;
+
+  return JSON.parse(jsonString);
 }
