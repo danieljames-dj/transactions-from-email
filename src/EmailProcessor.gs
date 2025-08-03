@@ -1,3 +1,8 @@
+const TRANSACTION_EMAIL_SENDERS = [
+  'alerts@hdfcbank.net',
+  'no-reply@amazonpay.in',
+];
+
 const IS_FINANCIAL_TRANSACTION_PROMPT = `
   Is this a notificaion email that says a financial transaction was made?
   If this is an email to just notify an OTP, no need to consider this as a financial transaction.
@@ -35,6 +40,9 @@ async function processEmail(email) {
 }
 
 async function isFinancialTransaction(emailBody, sender) {
+  if (!TRANSACTION_EMAIL_SENDERS.includes(sender)) {
+    return false;
+  }
   const response = await generateContent(`${IS_FINANCIAL_TRANSACTION_PROMPT}\n\nSender: ${sender}\n\nEmail Body: ${emailBody}`);
   return response.toLowerCase().trim() === 'true';
 }
