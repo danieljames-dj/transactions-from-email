@@ -40,11 +40,21 @@ async function processEmail(email) {
 }
 
 async function isFinancialTransaction(emailBody, sender) {
-  if (!TRANSACTION_EMAIL_SENDERS.includes(sender)) {
+  if (!TRANSACTION_EMAIL_SENDERS.includes(extractEmailFromHeader(sender))) {
     return false;
   }
   const response = await generateContent(`${IS_FINANCIAL_TRANSACTION_PROMPT}\n\nSender: ${sender}\n\nEmail Body: ${emailBody}`);
   return response.toLowerCase().trim() === 'true';
+}
+
+function extractEmailFromHeader(fromHeaderString) {
+  const emailMatch = fromHeaderString.match(/<([^>]+)>/);
+
+  if (emailMatch && emailMatch.length > 1) {
+    return emailMatch[1];
+  } else {
+    return fromHeaderString.trim();
+  }
 }
 
 async function getTransactionDetails(emailBody) {
