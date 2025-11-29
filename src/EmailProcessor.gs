@@ -2,6 +2,7 @@ const TRANSACTION_EMAIL_SENDERS = [
   'alerts@hdfcbank.net',
   'no-reply@amazonpay.in',
   'noreply@idfcfirstbank.com',
+  'credit_cards@icicibank.com',
 ];
 
 const IS_FINANCIAL_TRANSACTION_PROMPT = `
