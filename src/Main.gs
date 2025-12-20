@@ -1,7 +1,7 @@
 async function processRecentEmails() {
   const now = new Date();
-  const threeHoursAgo = new Date(now.getTime() - 3 * 60 * 60 * 1000);
-  const searchQuery = 'after:' + formatDate(threeHoursAgo);
+  const twoDaysAgo = new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000);
+  const searchQuery = 'after:' + formatDate(twoDaysAgo);
   const oldProcessedIds = getProcessedIds();
   const newProcessIds = new Set();
   let resourceExhausted = false;
@@ -18,7 +18,7 @@ async function processRecentEmails() {
       const messageId = message.getId();
       const messageDate = message.getDate();
 
-      if (messageDate >= threeHoursAgo && !oldProcessedIds.has(messageId)) {
+      if (messageDate >= twoDaysAgo && !oldProcessedIds.has(messageId)) {
         try {
           await processEmail(message);
         } catch(error) {
