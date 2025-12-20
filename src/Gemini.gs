@@ -1,5 +1,5 @@
 // Gemini API client using our simplified axios-like library
-const GEMINI_MODEL_NAME = 'gemini-2.5-flash';
+const GEMINI_MODEL_NAME = 'gemini-3-flash-preview';
 const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models';
 
 /**
