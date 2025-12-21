@@ -3,6 +3,7 @@ const TRANSACTION_EMAIL_SENDERS = [
   'no-reply@amazonpay.in',
   'noreply@idfcfirstbank.com',
   'credit_cards@icicibank.com',
+  'scapiacards@federalbank.co.in',
 ];
 
 const IS_FINANCIAL_TRANSACTION_PROMPT = `
