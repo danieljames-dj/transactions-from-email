@@ -1,5 +1,6 @@
 const TRANSACTION_EMAIL_SENDERS = [
   'alerts@hdfcbank.net',
+  'alerts@hdfcbank.bank.in',
   'no-reply@amazonpay.in',
   'noreply@idfcfirstbank.com',
   'credit_cards@icicibank.com',
