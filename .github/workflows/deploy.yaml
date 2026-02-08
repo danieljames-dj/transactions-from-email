@@ -56,7 +56,7 @@ jobs:
         run: clasp push --force
 
       - name: Deploy
-        run: clasp deploy --deploymentId ${{ secrets.DEPLOYMENT_ID }} --description "Automated Deploy"
+        run: clasp deploy --deploymentId ${{ secrets.DEPLOYMENT_ID }} --versionNumber ${{ secrets.VERSION_NUMBER }} --description "Automated Deploy"
 
       # This won't work because of some strange permission issue, for now using the workaround.
       - name: Set Script Properties
